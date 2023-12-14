@@ -1,86 +1,113 @@
 import java.util.Random;
 
 public class Main {
-
-    public static int bossHealth = 700;
-    public static int bossDamage = 100;
+    public static int bossHealth = 900;
+    public static int bossDamage = 50;
     public static String bossDefence;
-    public static int[] heroesHealth = {280, 270, 250, 250, 400, 500};
-    public static int[] heroesDamage = {10, 15, 20, 0, 0, 5};
-    public static String[] heroesAttackType = {"Physical", "Magical", "Kinetic", "Medic", "Witcher", "Lucky"};
+    public static int [] heroesHealth = {280, 270, 250, 265, 190, 200, 180};
+    public static int[] heroesDamage = {10, 20, 15, 0, 10, 10, 0};
+    public static String[] heroesAttackType = {"Physical", "Magical", "Kinetic",
+            "Medic", "Lucky", "Thor", "Witcher"};
     public static int roundNumber;
 
 
     public static void main(String[] args) {
-        printStatistics();
+        showStatistics();
         while (!isGameOver()) {
             playRound();
-        }
-
-    }
-
-    public static void lifeThor (){
-        Random random = new Random();
-        boolean randT = random.nextBoolean();
-        if (randT){
-            for (int i = 0; i < heroesHealth.length; i++) {
-                heroesHealth[i] += bossDamage;
-            }
-            System.out.println("thor did it");
         }
     }
 
     public static void playRound() {
         roundNumber++;
         chooseBossDefence();
-        healingHero();
-        bossAttack();
-        lifeThor();
-        luckyAbility();
+        medicHelp();
+        bossAttacks();
+        chanceThor();
+        luckyLucky();
         lifeWitcher();
-        heroesAttack();
-        printStatistics();
-    }
+        heroesAttacks();
+        showStatistics();
+        System.out.println();
 
-    public static void healingHero() {
-        boolean heroHealthUnder100 = false;
-        int medicHelp = 50;
-        for (int i = 0; i < heroesHealth.length; i++) {
-            if (heroesHealth[3] > 0) {
-                if (heroesHealth[i] < 100 && heroesHealth[i] > 0) {
-                    if (!heroHealthUnder100) {
-                        if (heroesAttackType[i] != "Medic") {
-                            heroHealthUnder100 = true;
-                            heroesHealth[i] = heroesHealth[i] + medicHelp;
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    public static void luckyAbility() {
-        Random random = new Random();
-        boolean rand2 = random.nextBoolean();
-        if (rand2) {
-            if (heroesHealth[5] > 0) {
-                heroesHealth[5] += bossDamage;
-                System.out.println("lucky");
-            }
-        }
     }
 
     public static void chooseBossDefence() {
         Random random = new Random();
-        int randomIndex = random.nextInt(heroesAttackType.length);
+        int randomIndex = random.nextInt(heroesHealth.length); //0,1,2
         bossDefence = heroesAttackType[randomIndex];
     }
 
-    public static void heroesAttack() {
+
+
+    public static void lifeWitcher(){
+        for (int i = 0; i < heroesHealth.length; i++) {
+            if (heroesHealth[6] > 0) {
+                if (heroesHealth [i] <=0) {
+                    heroesHealth[i] = heroesHealth[i] + heroesHealth[6];
+                    heroesHealth[6] = 0;
+                    System.out.println("Witcher help");
+                }
+            }
+
+        }
+    }
+    public static void bossAttacks() {
+        for (int i = 0; i < heroesHealth.length; i++) {
+            if (heroesHealth[i] > 0) {
+                if (heroesHealth[i] - bossDamage < 0) {
+                    heroesHealth[i] = 0;
+                } else{
+                    heroesHealth[i] = heroesHealth[i] - bossDamage;
+                }
+            }
+        }
+    }
+    public static void chanceThor (){
+        Random random = new Random();
+        boolean chance = random.nextBoolean();
+        if (chance) {
+            for (int i = 0; i < heroesHealth.length; i++) {
+                heroesHealth[i] += bossDamage;
+            }
+            System.out.println("Thor`s Chance");
+        }
+    }
+
+    public static void luckyLucky (){
+        Random random = new Random();
+        boolean randomm = random.nextBoolean();
+        if (randomm) {
+            if (heroesHealth[4] > 0) {
+                heroesHealth[4] += bossDamage;
+                System.out.println("Lucky");
+            }
+        }
+    }
+    public static void medicHelp(){
+        boolean heroHealthUnder100 = false;
+        Random random = new Random();
+        int healing = random.nextInt(2) + 2;
+        for (int i = 0; i < heroesHealth.length; i++) {
+            if (heroesHealth[3] > 0){
+                if (heroesHealth[i] < 100 && heroesHealth[i] > 0){
+                    if (!heroHealthUnder100) {
+                        if (heroesAttackType[i] != "Medic"){
+                            heroHealthUnder100 = true;
+                            heroesHealth [i] = heroesHealth[i] * healing;
+                            System.out.println("Medic helped");
+                        }
+                    }
+                }
+            }
+
+        }
+    }
+    public static void heroesAttacks() {
         for (int i = 0; i < heroesDamage.length; i++) {
             if (heroesHealth[i] > 0 && bossHealth > 0) {
                 int damage = heroesDamage[i];
-                if (heroesAttackType[i] == bossDefence) {
+                if (heroesAttackType[i] == bossDefence){
                     Random random = new Random();
                     int coeff = random.nextInt(9) + 2;
                     damage = heroesDamage[i] * coeff;
@@ -92,77 +119,49 @@ public class Main {
                     bossHealth = bossHealth - damage;
                 }
             }
-
         }
     }
 
-    public static void lifeWitcher() {
-        for (int i = 0; i < heroesHealth.length; i++) {
-            if (heroesHealth[4] > 0) {
-                if (heroesHealth[i] <= 0) {
-                    heroesHealth[i] = heroesHealth[i] + heroesHealth[4];
-                    heroesHealth[4] = 0;
-                    System.out.println("Witcher");
-                }
-            }
-        }
-    }
-
-    public static void bossAttack() {
-        for (int i = 0; i < heroesHealth.length; i++) {
-            if (heroesHealth[i] > 0) {
-                /*Random random = new Random();
-                boolean luck = random.nextBoolean();
-                if (luck = true) {
-                    heroesHealth[3] = heroesHealth[3];
-                }else*/
-                if (heroesHealth[i] - bossDamage < 0) {
-                    heroesHealth[i] = 0;
-                } else {
-                    heroesHealth[i] = heroesHealth[i] - bossDamage;
-                }
-            }
-        }
-    }
 
 
     public static boolean isGameOver() {
         if (bossHealth <= 0) {
-            System.out.println("Heroes won!!!");
+            System.out.println("Heroes won!");
             return true;
         }
-        /*if (heroesHealth[0] <= 0 && heroesHealth[1] <= 0 && heroesHealth[2] <= 0) {
-            System.out.println("Boss won!!!");
+        /*if (heroesHealth[0] <= 0 && heroesHealth[1]
+                <= 0 && heroesHealth[2] <= 0) {
+            System.out.println("Boss won!");
             return true;
         }
-         */
+        return false;*/
         boolean allHeroesDead = true;
         for (int i = 0; i < heroesHealth.length; i++) {
-            if (heroesHealth[i] > 0) {
+            if (heroesHealth[i] > 0){
                 allHeroesDead = false;
                 break;
             }
         }
-        if (allHeroesDead) {
+        if (allHeroesDead){
             System.out.println("Boss won!!!");
         }
         return allHeroesDead;
     }
 
-    public static void printStatistics() {
+    public static void showStatistics() {
         /*String defence;
-        if (bossDefence == null) {
-            defence = "No defence";
-        } else {
+        if (bossDefence == null){defence = "No defence";
+        }else {
             defence = bossDefence;
         }*/
-        System.out.println("ROUND " + roundNumber + " -------------");
-        System.out.println("Boss health: " + bossHealth + " damage: " + bossDamage +
-                " defence: " + (bossDefence == null ? "No defence" : bossDefence));
+        System.out.println("ROUND " + roundNumber + "-------------");
+        System.out.println("Boss health: " + bossHealth + ", damage: " +
+                bossDamage + ", defence: " + (bossDefence == null ? "No defence" : bossDefence)); //термальная конструкция
         for (int i = 0; i < heroesHealth.length; i++) {
-            System.out.println(heroesAttackType[i] +
-                    " health: " + heroesHealth[i] + " damage: " + heroesDamage[i]);
+            System.out.println(heroesAttackType[i] + " health: "
+                    + heroesHealth[i] + ", damage: " + heroesDamage[i]);
         }
+
     }
 
 }
